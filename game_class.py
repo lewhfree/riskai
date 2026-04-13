@@ -4,13 +4,13 @@ import random
 
 
 class Game:
-    def __init__(self, numplayers: int, extra_territories, players: list):
+    def __init__(self, extra_territories, players: list):
         self.troop_map = copy.deepcopy(countries.territories)
         self.extra_territories = extra_territories
-        self.numplayers = numplayers
         self.all_extra_territories = countries.extra_territories
         self.player = players
-
+        self.numplayers = len(self.player)
+        self.over = False
         print("init")
 
     def setup_map(self):
@@ -42,3 +42,7 @@ class Game:
             safe_troop_map: list[list] = self.troop_map or [[]]
             remainingtroops.append(troops - sum(1 for x in list(safe_troop_map.values()) if x[1] == i))
         self.remaining_troops = remainingtroops
+
+    def step(self):
+        pass
+        # print("step")
