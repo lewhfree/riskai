@@ -9,11 +9,8 @@ for i in range(5):
 
 game = game_class.Game(extra_territories_enabled, players)
 
-game.setup_map()
-game.deploy()
+game.setup()
 print("map", game.troop_map, len(game.troop_map))
-
-game.extra_troops()
 print(game.remaining_troops)
 while (not game.over):
     game.step()

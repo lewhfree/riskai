@@ -13,12 +13,11 @@ class Game:
         self.over = False
         print("init")
 
-    def setup_map(self):
+    def setup(self):
         disabled_territories = [x for x in self.all_extra_territories if x not in self.extra_territories]
         for territory in disabled_territories:
             self.troop_map.pop(territory)
 
-    def deploy(self):
         num_territories = len(self.troop_map)
         rounds = num_territories // self.numplayers
         remainder = num_territories % self.numplayers
@@ -34,7 +33,6 @@ class Game:
         for i in range(len(keys)):
             self.troop_map[keys[i]].extend((result[i][0], 1))
 
-    def extra_troops(self):
         troops: int = (50 - 5 * self.numplayers) if self.numplayers <= 6 else (30)
 
         remainingtroops: list = []
