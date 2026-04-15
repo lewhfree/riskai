@@ -1,4 +1,4 @@
-import countries
+import riskai.countries as countries
 import random
 
 

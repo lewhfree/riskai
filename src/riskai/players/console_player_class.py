@@ -1,13 +1,11 @@
-import player_class
+import riskai.player_class as player_class
 
 
 class User(player_class.PlayerTemplate):
     def __init__(self, own_id):
         self.id = own_id
 
-    def extra_troop_placement(self, troop_map) -> str:  # takes in the map, outputs the territory key where to put another troop
-        print("Here is the current troop map:\n")
-        return input("Territory name you want to place a troop: ").upper()
+    def extra_troop_placement(self) -> str:  # takes in the map, outputs the territory key where to put another troop
         pass
 
     def retreat_in_battle(self) -> bool:  # takes in battle numbers and maybe map, returns whether to retreat
