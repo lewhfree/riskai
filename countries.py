@@ -1,6 +1,13 @@
 country_count = 48
-enabled:list[int] = [True] * country_count
+
+ownership: list[int] = [-1] * country_count
+troop_count: list[int] = [0] * country_count
+
+enabled: list[int] = [True] * country_count
+
+# fmt: off
 name:list[str] = ['OIKIQTALUK', 'ALASKA', 'NORTHWEST_TERRITORY', 'GREENLAND', 'ALBERTA', 'ONTARIO', 'QUEBEC', 'WESTERN_UNITED_STATES', 'EASTERN_UNITED_STATES', 'CENTRAL_AMERICA', 'HAWAII', 'VENEZUELA', 'PERU', 'BRAZIL', 'ARGENTINA', 'FALKLAND_ISLANDS', 'NORTH_AFRICA', 'EGYPT', 'EAST_AFRICA', 'CONGO', 'SOUTH_AFRICA', 'MADAGASCAR', 'ICELAND', 'SVALBARD', 'SCANDINAVIA', 'UKRAINE', 'GREAT_BRITAIN', 'NORTHERN_EUROPE', 'SOUTHERN_EUROPE', 'WESTERN_EUROPE', 'INDONESIA', 'PHILLIPINES', 'NEW_GUINEA', 'WESTERN_AUSTRALIA', 'EASTERN_AUSTRALIA', 'NEW_ZEALAND', 'SIAM', 'INDIA', 'CHINA', 'MONGOLIA', 'JAPAN', 'IRKUTSK', 'YAKUTSK', 'KAMCHATKA', 'SIBERIA', 'AFGHANISTAN', 'URAL', 'MIDDLE_EAST']
+# fmt: on
 
 adjacency_list: list[set[int]] = [
     {2, 3, 5, 6},
@@ -52,5 +59,5 @@ adjacency_list: list[set[int]] = [
     {25, 44, 45, 38},
     {37, 45, 17, 18, 25, 28},
 ]
-continent:list[int] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
-continent_name:list[str] = ["North America", "South America", "Europe", "Africa", "Asia", "Oceania"]
+continent: list[int] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+continent_name: list[str] = ["North America", "South America", "Europe", "Africa", "Asia", "Oceania"]
