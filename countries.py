@@ -61,3 +61,11 @@ adjacency_list: list[set[int]] = [
 ]
 continent: list[int] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
 continent_name: list[str] = ["North America", "South America", "Europe", "Africa", "Asia", "Oceania"]
+
+extra_territories = [
+    "FALKLAND_ISLANDS",
+    "NEW_ZEALAND",
+    "PHILLIPINES",
+    "HAWAII",
+    "SVALBARD",
+]
