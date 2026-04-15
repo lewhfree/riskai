@@ -10,5 +10,14 @@ for i in range(5):
 game = game_class.Game(extra_territories_enabled, players)
 
 game.setup()
+
+print("Territory owned by: ", game.ownership)
+print("Territories in place: ", game.troop_counts)
+print("Enabled territories: ", game.territory_enabled)
+
+print(len(game.ownership))
+print(len(game.troop_counts))
+print(len(game.territory_enabled))
+
 while not game.over:
     game.step()

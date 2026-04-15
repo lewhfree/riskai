@@ -4,17 +4,22 @@ import random
 
 class Game:
     def __init__(self, extra_territories, players: list):
+        # State
         self.troop_counts = countries.troop_count
         self.ownership = countries.ownership
         self.territory_enabled = countries.enabled
+
         self.extra_territories = extra_territories
         self.all_extra_territories = countries.extra_territories
+
         self.player = players
         self.numplayers = len(self.player)
         self.over = False
 
     def setup(self) -> None:
         disabled_territories = [x for x in self.all_extra_territories if x not in self.extra_territories]
+
+        disabled_territories_index = [countries.name.index(a) for a in disabled_territories]
         for territory in disabled_territories:
             self.territory_enabled[countries.name.index(territory)] = False
 
@@ -31,6 +36,10 @@ class Game:
         for i in extra:
             result.append(i)
         random.shuffle(result)
+
+        # Maintain length constantly. Unused territories should still be in the list, just not owned.
+        for index in disabled_territories_index:
+            result.insert(index, -1)
 
         self.ownership = result
 
