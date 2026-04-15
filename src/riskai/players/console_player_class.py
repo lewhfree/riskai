@@ -1,4 +1,4 @@
-import riskai.player_class as player_class
+import riskai.players.player_class as player_class
 
 
 class User(player_class.PlayerTemplate):
