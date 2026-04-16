@@ -1,6 +1,6 @@
 import riskai.countries as countries
 import random
-from riskai.messages import Observation, Response
+from riskai.messages import Observation, Response, InvalidResponseError
 
 
 class Game:
@@ -57,12 +57,24 @@ class Game:
         doneplacing = 0
         while not (doneplacing == self.numplayers):
             for player in players_ids:
-                if self.remaining_troops[player]:
-                    #
-                    _ = self.players[player].decision(Observation(self.troop_counts, self.ownership, self.cards[player], 0, player, 0))
-                    self.remaining_troops[player] -= 1
-                    if self.remaining_troops[player] == 0:
-                        doneplacing += 1
+                # will keep trying on error, but alerts the player that you errored
+                while True:
+                    try:
+                        if self.remaining_troops[player]:
+                            response:Response = self.players[player].decision(Observation(self.troop_counts, self.ownership, self.cards[player], 0, player, 0))
+                            wanted_territory_id:int = response.response.territory_id
+                            if self.ownership[wanted_territory_id] == player:
+                                self.troop_counts[wanted_territory_id] += 1
+                            else:
+                                # you don't own this
+                                raise ValueError("You don't own the territory")
+                            self.remaining_troops[player] -= 1
+                            if self.remaining_troops[player] == 0:
+                                doneplacing += 1
+                            break
+                    except Exception as e:
+                        self.players[player].error(InvalidResponseError(0, str(e)))
+                        continue
 
         while not self.over:
             pass
