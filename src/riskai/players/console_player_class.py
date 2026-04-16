@@ -2,8 +2,9 @@ import riskai.players.player_class as player_class
 from riskai.messages import Observation, Response, TroopPlacement, InvalidResponseError, errors
 from riskai.utils import inputs
 
+
 class User(player_class.PlayerTemplate):
-    def decision(self, observation:Observation) -> Response:
+    def decision(self, observation: Observation) -> Response:
         print(observation)
         match observation.current_decision:
             case 0:
@@ -13,5 +14,6 @@ class User(player_class.PlayerTemplate):
             case _:
                 exit("not implemented")
         pass
-    def error(self, error:InvalidResponseError) -> None:
+
+    def error(self, error: InvalidResponseError) -> None:
         print("Error: ", errors[error.err_id], error.custom_str)

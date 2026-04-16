@@ -1,7 +1,8 @@
 import traceback
 
-def int_input(prompt:str) -> int:
-    val:int
+
+def int_input(prompt: str) -> int:
+    val: int
     while True:
         try:
             val = int(input(prompt))
