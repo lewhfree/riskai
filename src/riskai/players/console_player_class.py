@@ -1,24 +1,15 @@
 import riskai.players.player_class as player_class
-
+from riskai.messages import Observation, Response, TroopPlacement
+from riskai.utils import inputs
 
 class User(player_class.PlayerTemplate):
-    def __init__(self, own_id):
-        self.id = own_id
-
-    def extra_troop_placement(self) -> str:  # takes in the map, outputs the territory key where to put another troop
-        pass
-
-    def retreat_in_battle(self) -> bool:  # takes in battle numbers and maybe map, returns whether to retreat
-        pass
-
-    def choice_to_icom(self) -> bool:
-        pass
-
-    def attack_phase(self) -> dict | None:
-        pass
-
-    def move_troops(self) -> dict | None:
-        pass
-
-    def icom(self) -> dict:
+    def decision(self, observation:Observation) -> Response:
+        print(observation)
+        match observation.current_decision:
+            case 0:
+                territory_num = inputs.int_input("Where to place a troop? ")
+                response = Response(0, TroopPlacement(territory_id=territory_num))
+                return response
+            case _:
+                exit("not implemented")
         pass

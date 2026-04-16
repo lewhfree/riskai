@@ -1,5 +1,6 @@
 import riskai.countries as countries
 import random
+from riskai.messages import Observation, Response
 
 
 class Game:
@@ -12,11 +13,13 @@ class Game:
         self.extra_territories = extra_territories
         self.all_extra_territories = countries.extra_territories
 
-        self.player = players
-        self.numplayers = len(self.player)
+        self.players = players
+        self.numplayers = len(self.players)
         self.over = False
+        # a list of card ids for each player
+        self.cards: list[list[int]] = [[0] for _ in range(self.numplayers)]
 
-    def setup(self) -> None:
+    def start(self) -> None:
         disabled_territories = [x for x in self.all_extra_territories if x not in self.extra_territories]
 
         disabled_territories_index = [countries.name.index(a) for a in disabled_territories]
@@ -49,5 +52,17 @@ class Game:
             remainingtroops.append(troops - result[i])
         self.remaining_troops = remainingtroops
 
-    def step(self):
-        pass
+        # first do the initial troop placement then go over the rest
+        players_ids = list(range(self.numplayers))
+        doneplacing = 0
+        while not (doneplacing == self.numplayers):
+            for player in players_ids:
+                if self.remaining_troops[player]:
+                    #
+                    _ = self.players[player].decision(Observation(self.troop_counts, self.ownership, self.cards[player], 0, player, 0))
+                    self.remaining_troops[player] -= 1
+                    if self.remaining_troops[player] == 0:
+                        doneplacing += 1
+
+        while not self.over:
+            pass
