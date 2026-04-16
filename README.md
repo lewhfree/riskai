@@ -17,3 +17,5 @@ This documentation will not move as fast as things change so it may not be up to
 To use this, you must implement a [class](src/riskai/players/player_class.py) that takes in an [observation](src/riskai/messages.py) (only info that matters and only info the player should have access to) and returns a [response](src/riskai/messages.py).
 
 Hopefully there will be some simple bots later, but for now the only example implementation is the [cli player](src/riskai/players/console_player_class.py).
+
+After making a player, you just input the players that are to be played with into the game and start. Check out the [reference implementation](console.py) to see how all it works. 
