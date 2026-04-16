@@ -14,4 +14,4 @@ class User(player_class.PlayerTemplate):
                 exit("not implemented")
         pass
     def error(self, error:InvalidResponseError) -> None:
-        print("Error: ", errors[error.err_id])
+        print("Error: ", errors[error.err_id], error.custom_str)
