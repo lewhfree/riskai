@@ -30,3 +30,11 @@ errors = ["Error when placing territory"]
 @dataclass
 class TroopPlacement:
     territory_id: int
+
+
+@dataclass
+class Attack:
+    do_attack: bool
+    from_territory_id: int = -1
+    to_territory_id: int = -1
+    troops: int = -1
