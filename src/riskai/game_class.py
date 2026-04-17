@@ -19,7 +19,7 @@ class Game:
         # a list of card ids for each player
         self.cards: list[list[int]] = [[0] for _ in range(self.numplayers)]
 
-    def start(self) -> None:
+    def calculate_ownership(self) -> None:
         disabled_territories = [x for x in self.all_extra_territories if x not in self.extra_territories]
 
         disabled_territories_index = [countries.name.index(a) for a in disabled_territories]
@@ -46,13 +46,12 @@ class Game:
 
         self.ownership = result
 
+    def initial_troop_placement(self) -> None:
         troops: int = (50 - 5 * self.numplayers) if self.numplayers <= 6 else (30)
         remainingtroops: list = []
         for i in range(self.numplayers):
-            remainingtroops.append(troops - result[i])
+            remainingtroops.append(troops - self.ownership[i])
         self.remaining_troops = remainingtroops
-
-        # first do the initial troop placement then go over the rest
         players_ids = list(range(self.numplayers))
         doneplacing = 0
         while not (doneplacing == self.numplayers):
@@ -76,5 +75,12 @@ class Game:
                             self.players[player].error(InvalidResponseError(0, str(e)))
                             continue
 
+    def step(self) -> None:
+        print("")
+
+    def start(self) -> None:
+        self.calculate_ownership()
+        self.initial_troop_placement()
+        # first do the initial troop placement then go over the rest
         while not self.over:
-            pass
+            self.step()
