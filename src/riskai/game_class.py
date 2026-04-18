@@ -1,14 +1,15 @@
 import riskai.countries as countries
 import random
+from copy import deepcopy
 from riskai.messages import Observation, Response, InvalidResponseError
 
 
 class Game:
     def __init__(self, extra_territories, players: list):
         # State
-        self.troop_counts = countries.troop_count
-        self.ownership = countries.ownership
-        self.territory_enabled = countries.enabled
+        self.troop_counts = deepcopy(countries.troop_count)
+        self.ownership = deepcopy(countries.ownership)
+        self.territory_enabled = deepcopy(countries.enabled)
 
         self.extra_territories = extra_territories
         self.all_extra_territories = countries.extra_territories
@@ -18,6 +19,9 @@ class Game:
         self.over = False
         # a list of card ids for each player
         self.cards: list[list[int]] = [[0] for _ in range(self.numplayers)]
+
+        self.current_player = 0
+        self.current_phase = 0
 
     def calculate_ownership(self) -> None:
         disabled_territories = [x for x in self.all_extra_territories if x not in self.extra_territories]
@@ -76,11 +80,19 @@ class Game:
                             continue
 
     def step(self) -> None:
+        # get player
+        # get observation
+        # take action
+        # apply action to state
+        # advance state to next 
+        # Have a dict/list of constants representing the different stages. Each stage is and index
+        #     then have the last entry in the list be a NEXT_PLAYER stage where once encountered
+        #     you step the current player id (with rolling over) and reset the current stage counter. 
         print("")
 
     def start(self) -> None:
-        self.calculate_ownership()
-        self.initial_troop_placement()
+        # self.calculate_ownership()
+        # self.initial_troop_placement()
         # first do the initial troop placement then go over the rest
         while not self.over:
             self.step()

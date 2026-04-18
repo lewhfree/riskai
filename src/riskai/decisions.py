@@ -7,4 +7,5 @@ decisions = [
     "in_battle_decision",
     "move_after_win",
     "fortify",
+    "next_player"
 ]
