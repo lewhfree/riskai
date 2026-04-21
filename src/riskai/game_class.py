@@ -22,7 +22,7 @@ class Game:
         self.cards: list[list[int]] = [[0] for _ in range(self.numplayers)]
 
         self.current_player = 0
-        self.current_phase = 0
+        self.current_phase = Stages.INITIAL_PLACEMENT
         self.turn_number = 0
 
     def calculate_ownership(self) -> None:
@@ -57,8 +57,6 @@ class Game:
             result.insert(index, -1)
 
         self.ownership = result
-
-    def initial_troop_placement(self) -> None:
         troops: int = (
             (50 - 5 * self.numplayers) if self.numplayers <= 6 else (30)
         )
@@ -66,64 +64,25 @@ class Game:
         for i in range(self.numplayers):
             remainingtroops.append(troops - self.ownership[i])
         self.remaining_troops = remainingtroops
-        players_ids = list(range(self.numplayers))
-        doneplacing = 0
-        while not (doneplacing == self.numplayers):
-            for player in players_ids:
-                # will keep trying on error, but alerts the player that you errored
-                if self.remaining_troops[player]:
-                    while True:
-                        try:
-                            response: Response = self.players[player].decision(
-                                Observation(
-                                    self.troop_counts,
-                                    self.ownership,
-                                    self.cards[player],
-                                    player,
-                                    0,
-                                ),
-                                Stages.REINFORCE,
-                            )
-                            wanted_territory_id: int = (
-                                response.response.territory_id
-                            )
-                            if self.ownership[wanted_territory_id] == player:
-                                self.troop_counts[wanted_territory_id] += 1
-                            else:
-                                # you don't own this
-                                raise ValueError("You don't own the territory")
-                            self.remaining_troops[player] -= 1
-                            if self.remaining_troops[player] == 0:
-                                doneplacing += 1
-                            break
-                        except Exception as e:
-                            self.players[player].error(
-                                InvalidResponseError(0, str(e))
-                            )
-                            continue
 
     def step(self) -> None:
         player = self.players[self.current_player]
         phase = self.current_phase
 
         res = player.decision(self.get_observation(self.current_player), phase)
-        print(res)
+        self.apply_response(res, self.current_player)
 
-        new_phase = (phase + 1) % len(Stages)
-        if new_phase == 0:
-            new_player = (self.current_player + 1) % self.numplayers
-            self.current_player = new_player
-        self.current_phase = new_phase
-        # get player X
-        # get observation X
-        # take action X
-        # apply action to state TODO
-        # advance state to next X
-        # Have a dict/list of constants representing the different stages. Each stage is and index
-        #     then have the last entry in the list be a NEXT_PLAYER stage where once encountered
-        #     you step the current player id (with rolling over) and reset the current stage counter. X
-        print("")
-
+        if phase == Stages.INITIAL_PLACEMENT:
+            self.current_player = (self.current_player) % self.numplayers
+            if all(t == 0 for t in self.remaining_troops):
+                self.current_phase = Stages.TURN_START
+        else:
+            new_phase = (phase + 1) % (len(Stages) - 1) #the minus one is to ignore initial placement
+            if new_phase == 0:
+                new_player = (self.current_player + 1) % self.numplayers
+                self.current_player = new_player
+            self.current_phase = new_phase
+    
     def get_observation(self, player_id: int) -> Observation:
         return Observation(
             self.troop_counts,
@@ -133,9 +92,13 @@ class Game:
             self.turn_number,
         )
 
+    def apply_response(self, response: Response, player_id:int) -> None:
+        print(player_id, response)
+        print("apply_repsonse")
+
     def start(self) -> None:
         self.calculate_ownership()
-        self.initial_troop_placement()
+        # self.initial_troop_placement()
         # first do the initial troop placement then go over the rest
         while not self.over:
             self.step()

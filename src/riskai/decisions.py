@@ -10,3 +10,4 @@ class Stages(IntEnum):
     RETREAT = 5
     FORTIFY = 6
     END_TURN = 7
+    INITIAL_PLACEMENT = 8

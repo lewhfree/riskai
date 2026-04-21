@@ -22,7 +22,7 @@ class User(player_class.PlayerTemplate):
             case Stages.CARDS:
                 print("cards")
                 pass
-            case Stages.REINFORCE:
+            case Stages.REINFORCE | Stages.INITIAL_PLACEMENT:
                 print("reinforce")
                 territory_num = inputs.int_input("Where to place a troop? ")
                 response = Response(
