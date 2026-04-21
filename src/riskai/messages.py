@@ -31,3 +31,31 @@ class Attack:
     from_territory_id: int = -1
     to_territory_id: int = -1
     troops: int = -1
+
+@dataclass
+class TurnStart:
+    okay:bool
+
+@dataclass
+class Treaty:
+    okay:bool
+
+@dataclass
+class Cards:
+    okay:bool
+
+@dataclass
+class Reinforce:
+    okay:bool
+
+@dataclass
+class Retreat:
+    retreat:bool
+
+@dataclass
+class EndTurn:
+    okay:bool
+
+@dataclass
+class Fortify:
+    okay:bool

@@ -6,6 +6,13 @@ from riskai.messages import (
     Response,
     TroopPlacement,
     Attack,
+    TurnStart,
+    Cards,
+    Reinforce,
+    Retreat,
+    EndTurn,
+    Fortify,
+    Treaty,
 )
 from riskai.decisions import Stages
 
@@ -109,7 +116,7 @@ class Game:
                 print("treaty")
             case Stages.CARDS:
                 print("cards")
-            case Stages.REINFORCE | Stages.INITIAL_PLACEMENT:
+            case Stages.REINFORCE:
                 assert isinstance(response.response, TroopPlacement)
                 territory_id: int = response.response.territory_id
                 self.troop_counts[territory_id] += 1
@@ -122,6 +129,11 @@ class Game:
                 print("fortify")
             case Stages.END_TURN:
                 print("end")
+            case Stages.INITIAL_PLACEMENT:
+                assert isinstance(response.response, TroopPlacement)
+                territory_id: int = response.response.territory_id
+                self.troop_counts[territory_id] += 1
+                self.remaining_troops[player_id] -= 1
             case _:
                 exit("unhandled")
 
