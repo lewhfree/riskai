@@ -1,7 +1,12 @@
 import riskai.countries as countries
 import random
 from copy import deepcopy
-from riskai.messages import Observation, Response, InvalidResponseError
+from riskai.messages import (
+    Observation,
+    Response,
+    TroopPlacement,
+    Attack,
+)
 from riskai.decisions import Stages
 
 
@@ -19,13 +24,13 @@ class Game:
         self.numplayers = len(self.players)
         self.over = False
         # a list of card ids for each player
-        self.cards: list[list[int]] = [[0] for _ in range(self.numplayers)]
+        self.cards: list[list[int]] = [[] for _ in range(self.numplayers)]
 
         self.current_player = 0
         self.current_phase = Stages.INITIAL_PLACEMENT
         self.turn_number = 0
 
-    def calculate_ownership(self) -> None:
+    def setup(self) -> None:
         disabled_territories = [
             x
             for x in self.all_extra_territories
@@ -97,10 +102,30 @@ class Game:
     def apply_response(self, response: Response, player_id: int) -> None:
         print(player_id, response)
         print("apply_repsonse")
+        match response.current_decision:
+            case Stages.TURN_START:
+                print("turn start")
+            case Stages.TREATY:
+                print("treaty")
+            case Stages.CARDS:
+                print("cards")
+            case Stages.REINFORCE | Stages.INITIAL_PLACEMENT:
+                assert isinstance(response.response, TroopPlacement)
+                territory_id: int = response.response.territory_id
+                self.troop_counts[territory_id] += 1
+            case Stages.ATTACK_DECLARATION:
+                assert isinstance(response.response, Attack)
+                print("attack")
+            case Stages.RETREAT:
+                print("retreat")
+            case Stages.FORTIFY:
+                print("fortify")
+            case Stages.END_TURN:
+                print("end")
+            case _:
+                exit("unhandled")
 
     def start(self) -> None:
-        self.calculate_ownership()
-        # self.initial_troop_placement()
-        # first do the initial troop placement then go over the rest
+        self.setup()
         while not self.over:
             self.step()

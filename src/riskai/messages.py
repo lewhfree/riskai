@@ -16,12 +16,6 @@ class Response:
     response: object
 
 
-@dataclass
-class InvalidResponseError:
-    err_id: int
-    custom_str: str = ""
-
-
 errors = ["Error when placing territory"]
 # the valid responses
 
