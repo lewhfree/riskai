@@ -77,12 +77,14 @@ class Game:
             if all(t == 0 for t in self.remaining_troops):
                 self.current_phase = Stages.TURN_START
         else:
-            new_phase = (phase + 1) % (len(Stages) - 1) #the minus one is to ignore initial placement
+            new_phase = (phase + 1) % (
+                len(Stages) - 1
+            )  # the minus one is to ignore initial placement
             if new_phase == 0:
                 new_player = (self.current_player + 1) % self.numplayers
                 self.current_player = new_player
             self.current_phase = new_phase
-    
+
     def get_observation(self, player_id: int) -> Observation:
         return Observation(
             self.troop_counts,
@@ -92,7 +94,7 @@ class Game:
             self.turn_number,
         )
 
-    def apply_response(self, response: Response, player_id:int) -> None:
+    def apply_response(self, response: Response, player_id: int) -> None:
         print(player_id, response)
         print("apply_repsonse")
 
