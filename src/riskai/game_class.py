@@ -2,6 +2,7 @@ import riskai.countries as countries
 import random
 from copy import deepcopy
 from riskai.messages import Observation, Response, InvalidResponseError
+from riskai.decisions import Stages
 
 
 class Game:
@@ -22,11 +23,18 @@ class Game:
 
         self.current_player = 0
         self.current_phase = 0
+        self.turn_number = 0
 
     def calculate_ownership(self) -> None:
-        disabled_territories = [x for x in self.all_extra_territories if x not in self.extra_territories]
+        disabled_territories = [
+            x
+            for x in self.all_extra_territories
+            if x not in self.extra_territories
+        ]
 
-        disabled_territories_index = [countries.name.index(a) for a in disabled_territories]
+        disabled_territories_index = [
+            countries.name.index(a) for a in disabled_territories
+        ]
         for territory in disabled_territories:
             self.territory_enabled[countries.name.index(territory)] = False
 
@@ -51,7 +59,9 @@ class Game:
         self.ownership = result
 
     def initial_troop_placement(self) -> None:
-        troops: int = (50 - 5 * self.numplayers) if self.numplayers <= 6 else (30)
+        troops: int = (
+            (50 - 5 * self.numplayers) if self.numplayers <= 6 else (30)
+        )
         remainingtroops: list = []
         for i in range(self.numplayers):
             remainingtroops.append(troops - self.ownership[i])
@@ -64,8 +74,19 @@ class Game:
                 if self.remaining_troops[player]:
                     while True:
                         try:
-                            response: Response = self.players[player].decision(Observation(self.troop_counts, self.ownership, self.cards[player], 0, player, 0))
-                            wanted_territory_id: int = response.response.territory_id
+                            response: Response = self.players[player].decision(
+                                Observation(
+                                    self.troop_counts,
+                                    self.ownership,
+                                    self.cards[player],
+                                    player,
+                                    0,
+                                ),
+                                Stages.REINFORCE,
+                            )
+                            wanted_territory_id: int = (
+                                response.response.territory_id
+                            )
                             if self.ownership[wanted_territory_id] == player:
                                 self.troop_counts[wanted_territory_id] += 1
                             else:
@@ -76,23 +97,45 @@ class Game:
                                 doneplacing += 1
                             break
                         except Exception as e:
-                            self.players[player].error(InvalidResponseError(0, str(e)))
+                            self.players[player].error(
+                                InvalidResponseError(0, str(e))
+                            )
                             continue
 
     def step(self) -> None:
-        # get player
-        # get observation
-        # take action
-        # apply action to state
-        # advance state to next 
+        player = self.players[self.current_player]
+        phase = self.current_phase
+
+        res = player.decision(self.get_observation(self.current_player), phase)
+        print(res)
+
+        new_phase = (phase + 1) % len(Stages)
+        if new_phase == 0:
+            new_player = (self.current_player + 1) % self.numplayers
+            self.current_player = new_player
+        self.current_phase = new_phase
+        # get player X
+        # get observation X
+        # take action X
+        # apply action to state TODO
+        # advance state to next X
         # Have a dict/list of constants representing the different stages. Each stage is and index
         #     then have the last entry in the list be a NEXT_PLAYER stage where once encountered
-        #     you step the current player id (with rolling over) and reset the current stage counter. 
+        #     you step the current player id (with rolling over) and reset the current stage counter. X
         print("")
 
+    def get_observation(self, player_id: int) -> Observation:
+        return Observation(
+            self.troop_counts,
+            self.ownership,
+            self.cards[player_id],
+            player_id,
+            self.turn_number,
+        )
+
     def start(self) -> None:
-        # self.calculate_ownership()
-        # self.initial_troop_placement()
+        self.calculate_ownership()
+        self.initial_troop_placement()
         # first do the initial troop placement then go over the rest
         while not self.over:
             self.step()

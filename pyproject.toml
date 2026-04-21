@@ -7,4 +7,4 @@ name = "riskai"
 version = "0.0.1"
 
 [tool.ruff]
-line-length = 320
+line-length = 79

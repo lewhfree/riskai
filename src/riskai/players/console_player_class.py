@@ -1,29 +1,43 @@
 import riskai.players.player_class as player_class
-from riskai.messages import Observation, Response, TroopPlacement, InvalidResponseError, errors
+from riskai.messages import (
+    Observation,
+    Response,
+    TroopPlacement,
+    InvalidResponseError,
+    errors,
+)
 from riskai.utils import inputs
+from riskai.decisions import Stages
 
 
 class User(player_class.PlayerTemplate):
-    def decision(self, observation: Observation) -> Response:
+    def decision(self, observation: Observation, phase: Stages) -> Response:
         print(observation)
-        match observation.current_decision:
-            case 0:
+        match phase:
+            case Stages.TURN_START:
+                print("turn start")
+            case Stages.TREATY:
+                print("treaty")
+                pass
+            case Stages.CARDS:
+                print("cards")
+                pass
+            case Stages.REINFORCE:
+                print("reinforce")
                 territory_num = inputs.int_input("Where to place a troop? ")
-                response = Response(0, TroopPlacement(territory_id=territory_num))
+                response = Response(
+                    Stages.REINFORCE,
+                    TroopPlacement(territory_id=territory_num),
+                )
                 return response
-            case 1:  # Treaty
+            case Stages.ATTACK_DECLARATION:
+                print("declarea ttack")
                 pass
-            case 2:  # Card_turn_in
+            case Stages.RETREAT:
+                print("retreat")
                 pass
-            case 3:  # reinforce
-                pass
-            case 4:  # attack declare
-                pass
-            case 5:  # in_battle_decision
-                pass
-            case 6:  # move_after_win
-                pass
-            case 7:  # fortify
+            case Stages.FORTIFY:
+                print("fortify")
                 pass
             case _:
                 exit("not implemented")

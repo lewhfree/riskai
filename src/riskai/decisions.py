@@ -1,11 +1,12 @@
-decisions = [
-    "initial_placement",
-    "treaty",
-    "card_turn_in",
-    "reinforce",
-    "attack_declare",
-    "in_battle_decision",
-    "move_after_win",
-    "fortify",
-    "next_player"
-]
+from enum import IntEnum
+
+
+class Stages(IntEnum):
+    TURN_START = 0
+    TREATY = 1
+    CARDS = 2
+    REINFORCE = 3
+    ATTACK_DECLARATION = 4
+    RETREAT = 5
+    FORTIFY = 6
+    END_TURN = 7
