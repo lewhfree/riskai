@@ -10,6 +10,12 @@ This uses pyproject.toml so installation with pip is fairly easy.
 pip install git+https://github.com/lewhfree/riskai
 ```
 
+or from project root:
+
+```
+pip install -e .
+```
+
 ### Usage
 
 This documentation will not move as fast as things change so it may not be up to date. The best documentation is just to look at the implementation in the repo. 
