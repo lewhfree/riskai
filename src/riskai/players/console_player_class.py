@@ -5,6 +5,9 @@ from riskai.decisions import Stages
 
 
 class User(player_class.PlayerTemplate):
+    def accept_treaty(self, observation: m.Observation, player_id, level: m.TreatyLevels) -> bool:
+        print(observation, player_id, level)
+        return inputs.bool_input("Accept this treaty? ")
     def decision(
         self, observation: m.Observation, phase: Stages
     ) -> m.Response:
@@ -14,7 +17,7 @@ class User(player_class.PlayerTemplate):
             # =================================================================
             case Stages.TREATY:
                 level = input(
-                    "Which Treaty level (LEVEL1, LEVEL2, LEVEL3, WAR, NONE)? "
+                    "Which Treaty level (LEVEL1, LEVEL2, LEVEL3, WAR, NONE, NO_TREATIES)? "
                 )
                 level = m.TreatyLevels[level]
                 person = inputs.int_input("Which person to attack? ")

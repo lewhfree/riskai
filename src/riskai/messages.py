@@ -9,6 +9,7 @@ class Observation:
     cards: list[int]
     player_id: int
     turn_number: int
+    treaties: list[list]
 
 
 @dataclass
@@ -39,6 +40,7 @@ class TreatyLevels(IntEnum):
     LEVEL3 = 3
     WAR = 4
     NONE = 0
+    NO_TREATIES = 5 #Different than none. This ends the treaty phase
 
 
 @dataclass

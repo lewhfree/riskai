@@ -23,6 +23,11 @@ class Game:
         # a list of card ids for each player
         self.cards: list[list[int]] = [[] for _ in range(self.numplayers)]
 
+        self.treaties: list[list[m.TreatyLevels]] = [
+            [m.TreatyLevels.NONE] * self.numplayers
+            for _ in range(self.numplayers)
+        ]
+
         self.current_player = 0
         self.current_phase = Stages.INITIAL_PLACEMENT
         self.turn_number = 0
@@ -143,6 +148,19 @@ class Game:
                     self.current_phase,
                 )
                 assert isinstance(res.response, m.Treaty)
+                level = res.response.level
+                if level == m.TreatyLevels.NO_TREATIES:
+                    self.current_phase = Stages.CARDS
+                    return
+                to_user_id = res.response.person
+                offer = self.players[to_user_id].accept_treaty(
+                    self.get_observation(to_user_id),
+                    self.current_player,
+                    level,
+                )
+                if offer:
+                    self.treaties[self.current_player][to_user_id] = level
+
             # ====================================================================
             # ====================================================================
             case Stages.CARDS:
@@ -160,7 +178,13 @@ class Game:
                     self.get_observation(self.current_player),
                     self.current_phase,
                 )
-                assert isinstance(res.response, m.Reinforce)
+                assert isinstance(res.response, m.TroopPlacement)
+
+                if self.remaining_troops[self.current_player] == 1:
+                    self.current_phase = Stages.ATTACK_DECLARATION
+                id = res.response.territory_id
+                self.troop_counts[id] += 1
+                self.remaining_troops[self.current_player] -= 1
             # ====================================================================
             # ====================================================================
             case Stages.ATTACK_DECLARATION:
@@ -195,10 +219,6 @@ class Game:
                 self.current_player = (
                     self.current_player + 1
                 ) % self.numplayers
-            # ====================================================================
-            # ====================================================================
-            case _:
-                exit("unmatched phase")
 
     def get_observation(self, player_id: int) -> m.Observation:
         return m.Observation(
@@ -207,6 +227,7 @@ class Game:
             self.cards[player_id],
             player_id,
             self.turn_number,
+            self.treaties,
         )
 
     def start(self) -> None:
