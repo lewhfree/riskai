@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import IntEnum
 
 
 @dataclass
@@ -32,23 +33,21 @@ class Attack:
     troops: int = -1
 
 
-@dataclass
-class TurnStart:
-    okay: bool
-
+class TreatyLevels(IntEnum):
+    LEVEL1 = 1
+    LEVEL2 = 2
+    LEVEL3 = 3
+    WAR = 4
+    NONE = 0
 
 @dataclass
 class Treaty:
-    okay: bool
+    level: TreatyLevels
+    person: int = -1
 
 
 @dataclass
 class Cards:
-    okay: bool
-
-
-@dataclass
-class Reinforce:
     okay: bool
 
 
@@ -58,10 +57,8 @@ class Retreat:
 
 
 @dataclass
-class EndTurn:
-    okay: bool
-
-
-@dataclass
 class Fortify:
-    okay: bool
+    do_reinforce:bool
+    from_territory:int = -1
+    to_territory:int = -1
+    troops:int = -1

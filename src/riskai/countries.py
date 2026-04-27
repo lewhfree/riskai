@@ -119,9 +119,7 @@ continent_name: list[str] = [
     "Oceania",
 ]
 
-continent_bonuses: list[int] = [
-    5, 2, 5, 3, 7, 2
-]
+continent_bonuses: list[int] = [5, 2, 5, 3, 7, 2]
 
 extra_territories = [
     "FALKLAND_ISLANDS",

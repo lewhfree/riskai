@@ -1,19 +1,8 @@
 import riskai.countries as countries
 import random
 from copy import deepcopy
-from riskai.messages import (
-    Observation,
-    Response,
-    TroopPlacement,
-    Attack,
-    TurnStart,
-    Cards,
-    Reinforce,
-    Retreat,
-    EndTurn,
-    Fortify,
-    Treaty,
-)
+import riskai.messages as m
+# from riskai.messages import *
 from riskai.decisions import Stages
 
 
@@ -104,24 +93,32 @@ class Game:
             self.current_player = (self.current_player + 1) % self.numplayers
             self.current_phase = Stages.TURN_START
             return
-        #current_player = self.players[self.current_player]
         match self.current_phase:
+            # ====================================================================
+            # ====================================================================
             case Stages.INITIAL_PLACEMENT:
                 while self.remaining_troops[self.current_player] == 0:
-                    self.current_player = (self.current_player + 1) % self.numplayers
+                    self.current_player = (
+                        self.current_player + 1
+                    ) % self.numplayers
                 current_player = self.players[self.current_player]
                 res = current_player.decision(
                     self.get_observation(self.current_player),
                     self.current_phase,
                 )
-                territory_id: Response = res.response.territory_id
+                assert isinstance(res.response, m.TroopPlacement)
+                territory_id: m.Response = res.response.territory_id
 
                 self.troop_counts[territory_id] += 1
                 self.remaining_troops[self.current_player] -= 1
-                self.current_player = (self.current_player + 1) % self.numplayers
+                self.current_player = (
+                    self.current_player + 1
+                ) % self.numplayers
                 if sum(self.remaining_troops) == 0:
                     self.current_phase = Stages.TURN_START
                     self.current_player = 0
+            # ====================================================================
+            # ====================================================================
             case Stages.TURN_START:
                 # don't have to do anything. Just for game engine i think
                 # calculate the troop numbers here
@@ -129,32 +126,81 @@ class Game:
                 remaining_troops = max(
                     3, self.ownership.count(self.current_player) // 3
                 )
-                self.remaining_troops[self.current_player] = remaining_troops
+                # this is += because there may be troops leftover from like cards
+                self.remaining_troops[self.current_player] += remaining_troops
                 # continent bonuses
                 for owned in self.owns_any_continents(self.current_player):
-                    self.remaining_troops[self.current_player] += countries.continent_bonuses[owned]
+                    self.remaining_troops[self.current_player] += (
+                        countries.continent_bonuses[owned]
+                    )
+            # ====================================================================
+            # ====================================================================
             case Stages.TREATY:
-                print("treaty")
+                current_player = self.players[self.current_player]
+                res = current_player.decision(
+                    self.get_observation(self.current_player),
+                    self.current_phase,
+                )
+                assert isinstance(res.response, m.Treaty)
+            # ====================================================================
+            # ====================================================================
             case Stages.CARDS:
-                print("cards")
+                current_player = self.players[self.current_player]
+                res = current_player.decision(
+                    self.get_observation(self.current_player),
+                    self.current_phase,
+                )
+                assert isinstance(res.response, m.Cards)
+            # ====================================================================
+            # ====================================================================
             case Stages.REINFORCE:
-                print("reinforce")
+                current_player = self.players[self.current_player]
+                res = current_player.decision(
+                    self.get_observation(self.current_player),
+                    self.current_phase,
+                )
+                assert isinstance(res.response, m.Reinforce)
+            # ====================================================================
+            # ====================================================================
             case Stages.ATTACK_DECLARATION:
-                print("attack")
+                current_player = self.players[self.current_player]
+                res = current_player.decision(
+                    self.get_observation(self.current_player),
+                    self.current_phase,
+                )
+                assert isinstance(res.response, m.Attack)
+            # ====================================================================
+            # ====================================================================
             case Stages.RETREAT:
-                print("retreat")
+                current_player = self.players[self.current_player]
+                res = current_player.decision(
+                    self.get_observation(self.current_player),
+                    self.current_phase,
+                )
+                assert isinstance(res.response, m.Retreat)
+            # ====================================================================
+            # ====================================================================
             case Stages.FORTIFY:
-                print("fortify")
+                current_player = self.players[self.current_player]
+                res = current_player.decision(
+                    self.get_observation(self.current_player),
+                    self.current_phase,
+                )
+                assert isinstance(res.response, m.Fortify)
+            # ====================================================================
+            # ====================================================================
             case Stages.END_TURN:
                 self.current_phase = Stages.TURN_START
                 self.current_player = (
                     self.current_player + 1
                 ) % self.numplayers
+            # ====================================================================
+            # ====================================================================
             case _:
-                print("unmatched phase")
+                exit("unmatched phase")
 
-    def get_observation(self, player_id: int) -> Observation:
-        return Observation(
+    def get_observation(self, player_id: int) -> m.Observation:
+        return m.Observation(
             self.troop_counts,
             self.ownership,
             self.cards[player_id],
