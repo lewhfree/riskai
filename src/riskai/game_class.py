@@ -36,6 +36,7 @@ class Game:
         self.current_player = 0
         self.current_phase = Stages.INITIAL_PLACEMENT
         self.turn_number = 0
+        self.deadplayers = []
 
     def setup(self) -> None:
         disabled_territories = [
@@ -99,6 +100,10 @@ class Game:
         return owns
 
     def step(self) -> None:
+        if self.current_player in self.deadplayers:
+            self.current_player = (self.current_player + 1) % self.numplayers
+            self.current_phase = Stages.TURN_START
+            return
         #current_player = self.players[self.current_player]
         match self.current_phase:
             case Stages.INITIAL_PLACEMENT:
