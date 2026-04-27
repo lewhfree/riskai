@@ -12,6 +12,7 @@ def int_input(prompt: str) -> int:
             traceback.print_exc()
     return val
 
+
 def bool_input(prompt: str) -> bool:
     val: bool
     while True:

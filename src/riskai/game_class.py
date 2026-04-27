@@ -2,6 +2,7 @@ import riskai.countries as countries
 import random
 from copy import deepcopy
 import riskai.messages as m
+
 # from riskai.messages import *
 from riskai.decisions import Stages
 

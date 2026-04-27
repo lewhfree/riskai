@@ -40,6 +40,7 @@ class TreatyLevels(IntEnum):
     WAR = 4
     NONE = 0
 
+
 @dataclass
 class Treaty:
     level: TreatyLevels
@@ -58,7 +59,7 @@ class Retreat:
 
 @dataclass
 class Fortify:
-    do_reinforce:bool
-    from_territory:int = -1
-    to_territory:int = -1
-    troops:int = -1
+    do_reinforce: bool
+    from_territory: int = -1
+    to_territory: int = -1
+    troops: int = -1
