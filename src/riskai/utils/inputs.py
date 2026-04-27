@@ -11,3 +11,14 @@ def int_input(prompt: str) -> int:
             print("Bad int value")
             traceback.print_exc()
     return val
+
+def bool_input(prompt: str) -> bool:
+    val: bool
+    while True:
+        try:
+            val = bool(input(prompt).lower == "true")
+            break
+        except ValueError:
+            print("bad bool value")
+            traceback.print_exc()
+    return val
