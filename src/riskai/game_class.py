@@ -74,7 +74,7 @@ class Game:
         )
         remainingtroops: list = []
         for i in range(self.numplayers):
-            remainingtroops.append(troops - self.ownership[i])
+            remainingtroops.append(troops - self.ownership.count(i))
         self.remaining_troops = remainingtroops
 
     def owns_continent(self, player_id, continent_id) -> bool:
@@ -93,15 +93,18 @@ class Game:
         # this loops over continent #continents times. This can be simplified into a single run.
         # nested loop bad.
         owns = []
-        for continent in range(countries.country_count):
-            self.owns_continent(player_id, continent)
-            owns.append(continent)
+        for continent in range(countries.continent_count):
+            if self.owns_continent(player_id, continent):
+                owns.append(continent)
         return owns
 
     def step(self) -> None:
-        current_player = self.players[self.current_player]
+        #current_player = self.players[self.current_player]
         match self.current_phase:
             case Stages.INITIAL_PLACEMENT:
+                while self.remaining_troops[self.current_player] == 0:
+                    self.current_player = (self.current_player + 1) % self.numplayers
+                current_player = self.players[self.current_player]
                 res = current_player.decision(
                     self.get_observation(self.current_player),
                     self.current_phase,
@@ -110,21 +113,15 @@ class Game:
 
                 self.troop_counts[territory_id] += 1
                 self.remaining_troops[self.current_player] -= 1
-                if self.remaining_troops[self.current_player] == 0:
-                    # if this current player is out of troops
-                    if self.current_player == (self.numplayers - 1):
-                        # all players are done placing initial troops
-                        self.current_player = 0
-                        self.current_phase = Stages.TURN_START
-                    else:
-                        self.current_player += 1
-                        self.current_phase = Stages.INITIAL_PLACEMENT
-                        # redundant, for readability sake
+                self.current_player = (self.current_player + 1) % self.numplayers
+                if sum(self.remaining_troops) == 0:
+                    self.current_phase = Stages.TURN_START
+                    self.current_player = 0
             case Stages.TURN_START:
                 # don't have to do anything. Just for game engine i think
                 # calculate the troop numbers here
                 self.current_phase = Stages.TREATY
-                remaining_troops = min(
+                remaining_troops = max(
                     3, self.ownership.count(self.current_player) // 3
                 )
                 self.remaining_troops[self.current_player] = remaining_troops
