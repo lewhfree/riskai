@@ -1,4 +1,5 @@
 country_count = 48
+continent_count = 6
 
 ownership: list[int] = [-1] * country_count
 troop_count: list[int] = [0] * country_count
@@ -116,6 +117,10 @@ continent_name: list[str] = [
     "Africa",
     "Asia",
     "Oceania",
+]
+
+continent_bonuses: list[int] = [
+    5, 2, 5, 3, 7, 2
 ]
 
 extra_territories = [

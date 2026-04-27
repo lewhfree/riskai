@@ -3,8 +3,6 @@ from riskai.messages import (
     Observation,
     Response,
     TroopPlacement,
-    InvalidResponseError,
-    errors,
 )
 from riskai.utils import inputs
 from riskai.decisions import Stages
@@ -42,6 +40,3 @@ class User(player_class.PlayerTemplate):
             case _:
                 exit("not implemented")
         return Response(-1, None)
-
-    def error(self, error: InvalidResponseError) -> None:
-        print("Error: ", errors[error.err_id], error.custom_str)
