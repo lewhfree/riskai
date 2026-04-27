@@ -15,8 +15,6 @@ class Response:
     current_decision: int
     response: object
 
-
-errors = ["Error when placing territory"]
 # the valid responses
 
 
