@@ -15,6 +15,7 @@ class Response:
     current_decision: int
     response: object
 
+
 # the valid responses
 
 
@@ -30,30 +31,37 @@ class Attack:
     to_territory_id: int = -1
     troops: int = -1
 
+
 @dataclass
 class TurnStart:
-    okay:bool
+    okay: bool
+
 
 @dataclass
 class Treaty:
-    okay:bool
+    okay: bool
+
 
 @dataclass
 class Cards:
-    okay:bool
+    okay: bool
+
 
 @dataclass
 class Reinforce:
-    okay:bool
+    okay: bool
+
 
 @dataclass
 class Retreat:
-    retreat:bool
+    retreat: bool
+
 
 @dataclass
 class EndTurn:
-    okay:bool
+    okay: bool
+
 
 @dataclass
 class Fortify:
-    okay:bool
+    okay: bool

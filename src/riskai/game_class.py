@@ -77,25 +77,79 @@ class Game:
             remainingtroops.append(troops - self.ownership[i])
         self.remaining_troops = remainingtroops
 
+    def owns_continent(self, player_id, continent_id) -> bool:
+        numcountries = countries.continent.count(continent_id)
+        count = 0
+        assert numcountries != 0
+        for i, ownership in enumerate(self.ownership):
+            if (ownership == player_id) and (
+                countries.continent[i] == continent_id
+            ):
+                count += 1
+        return numcountries == count
+
+    def owns_any_continents(self, player_id) -> list[int]:
+        # TODO: REALLY REALLY INEFFICIENT, FIX ASAP
+        # this loops over continent #continents times. This can be simplified into a single run.
+        # nested loop bad.
+        owns = []
+        for continent in range(countries.country_count):
+            self.owns_continent(player_id, continent)
+            owns.append(continent)
+        return owns
+
     def step(self) -> None:
-        player = self.players[self.current_player]
-        phase = self.current_phase
+        current_player = self.players[self.current_player]
+        match self.current_phase:
+            case Stages.INITIAL_PLACEMENT:
+                res = current_player.decision(
+                    self.get_observation(self.current_player),
+                    self.current_phase,
+                )
+                territory_id: Response = res.response.territory_id
 
-        res = player.decision(self.get_observation(self.current_player), phase)
-        self.apply_response(res, self.current_player)
-
-        if phase == Stages.INITIAL_PLACEMENT:
-            self.current_player = (self.current_player) % self.numplayers
-            if all(t == 0 for t in self.remaining_troops):
+                self.troop_counts[territory_id] += 1
+                self.remaining_troops[self.current_player] -= 1
+                if self.remaining_troops[self.current_player] == 0:
+                    # if this current player is out of troops
+                    if self.current_player == (self.numplayers - 1):
+                        # all players are done placing initial troops
+                        self.current_player = 0
+                        self.current_phase = Stages.TURN_START
+                    else:
+                        self.current_player += 1
+                        self.current_phase = Stages.INITIAL_PLACEMENT
+                        # redundant, for readability sake
+            case Stages.TURN_START:
+                # don't have to do anything. Just for game engine i think
+                # calculate the troop numbers here
+                self.current_phase = Stages.TREATY
+                remaining_troops = min(
+                    3, self.ownership.count(self.current_player) // 3
+                )
+                self.remaining_troops[self.current_player] = remaining_troops
+                # continent bonuses
+                for owned in self.owns_any_continents(self.current_player):
+                    self.remaining_troops[self.current_player] += countries.continent_bonuses[owned]
+            case Stages.TREATY:
+                print("treaty")
+            case Stages.CARDS:
+                print("cards")
+            case Stages.REINFORCE:
+                print("reinforce")
+            case Stages.ATTACK_DECLARATION:
+                print("attack")
+            case Stages.RETREAT:
+                print("retreat")
+            case Stages.FORTIFY:
+                print("fortify")
+            case Stages.END_TURN:
                 self.current_phase = Stages.TURN_START
-        else:
-            new_phase = (phase + 1) % (
-                len(Stages) - 1
-            )  # the minus one is to ignore initial placement
-            if new_phase == 0:
-                new_player = (self.current_player + 1) % self.numplayers
-                self.current_player = new_player
-            self.current_phase = new_phase
+                self.current_player = (
+                    self.current_player + 1
+                ) % self.numplayers
+            case _:
+                print("unmatched phase")
 
     def get_observation(self, player_id: int) -> Observation:
         return Observation(
@@ -105,37 +159,6 @@ class Game:
             player_id,
             self.turn_number,
         )
-
-    def apply_response(self, response: Response, player_id: int) -> None:
-        print(player_id, response)
-        print("apply_repsonse")
-        match response.current_decision:
-            case Stages.TURN_START:
-                print("turn start")
-            case Stages.TREATY:
-                print("treaty")
-            case Stages.CARDS:
-                print("cards")
-            case Stages.REINFORCE:
-                assert isinstance(response.response, TroopPlacement)
-                territory_id: int = response.response.territory_id
-                self.troop_counts[territory_id] += 1
-            case Stages.ATTACK_DECLARATION:
-                assert isinstance(response.response, Attack)
-                print("attack")
-            case Stages.RETREAT:
-                print("retreat")
-            case Stages.FORTIFY:
-                print("fortify")
-            case Stages.END_TURN:
-                print("end")
-            case Stages.INITIAL_PLACEMENT:
-                assert isinstance(response.response, TroopPlacement)
-                territory_id: int = response.response.territory_id
-                self.troop_counts[territory_id] += 1
-                self.remaining_troops[player_id] -= 1
-            case _:
-                exit("unhandled")
 
     def start(self) -> None:
         self.setup()
