@@ -30,13 +30,13 @@ class User(player_class.PlayerTemplate):
             # =================================================================
             # =================================================================
             case Stages.TREATY:
-                level = input(
+                level:str = input(
                     "Which Treaty level (LEVEL1, LEVEL2, LEVEL3, WAR, NONE, NO_TREATIES)? "
                 )
-                level = m.TreatyLevels[level]
+                levelenum = m.TreatyLevels[level]
                 person = inputs.int_input("Which person to attack? ")
                 response = m.Response(
-                    Stages.TREATY, m.Treaty(level=level, person=person)
+                    Stages.TREATY, m.Treaty(level=levelenum, person=person)
                 )
                 return response
             # =================================================================

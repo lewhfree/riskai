@@ -1,6 +1,6 @@
 import riskai.countries as countries
 import random
-from copy import deepcopy, copy
+from copy import deepcopy
 import riskai.messages as m
 from riskai.decisions import Stages
 
@@ -29,7 +29,7 @@ class Game:
         self.current_player = 0
         self.current_phase = Stages.INITIAL_PLACEMENT
         self.turn_number = 0
-        self.deadplayers = []
+        self.deadplayers:list[int] = []
 
         self.captured_this_turn: bool
 
@@ -113,7 +113,7 @@ class Game:
                     self.current_phase,
                 )
                 assert isinstance(res.response, m.TroopPlacement)
-                territory_id: m.Response = res.response.territory_id
+                territory_id: int = res.response.territory_id
 
                 self.troop_counts[territory_id] += 1
                 self.remaining_troops[self.current_player] -= 1
