@@ -9,7 +9,10 @@ class User(player_class.PlayerTemplate):
         print("Attacking.")
         print(observation, "\nround: ", round)
         return inputs.bool_input("Retreat? ")
-    def move_troop_count(self, observation: m.Observation, from_t, to_t) -> int:
+
+    def move_troop_count(
+        self, observation: m.Observation, from_t, to_t
+    ) -> int:
         print(observation, from_t, to_t)
         return inputs.int_input("How many troops to move? ")
 

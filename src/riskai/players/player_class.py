@@ -9,7 +9,7 @@ class PlayerTemplate(ABC):
         pass
 
     @abstractmethod
-    def move_troop_count(self, observation: Observation,  from_t, to_t) -> int:
+    def move_troop_count(self, observation: Observation, from_t, to_t) -> int:
         pass
 
     @abstractmethod

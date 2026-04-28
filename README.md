@@ -16,6 +16,10 @@ or from project root:
 pip install -e .
 ```
 
+### Disclaimer!
+
+The game engine assumes that all inputs are valid. This is a terrible idea. At some point in the future, part of the decisions parameters will be a mask of valid moves or information like that. It is too much to shove onto the player class to do move verification.
+
 ### Usage
 
 This documentation will not move as fast as things change so it may not be up to date. The best documentation is just to look at the implementation in the repo. 

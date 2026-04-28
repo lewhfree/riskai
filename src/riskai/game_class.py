@@ -31,7 +31,7 @@ class Game:
         self.turn_number = 0
         self.deadplayers = []
 
-        self.captured_this_turn:bool
+        self.captured_this_turn: bool
 
     def setup(self) -> None:
         disabled_territories = [
@@ -210,36 +210,47 @@ class Game:
                 while True:
                     adcount = min(3, attacking_troops)
                     ddcount = min(2, defending_troops)
-                    adice = [random.randint(1,6) for _ in range(adcount)]
-                    ddice = [random.randint(1,6) for _ in range(ddcount)]
-                    zipped = zip(sorted(adice, reverse=True), sorted(ddice, reverse=True))
-                    
+                    adice = [random.randint(1, 6) for _ in range(adcount)]
+                    ddice = [random.randint(1, 6) for _ in range(ddcount)]
+                    zipped = zip(
+                        sorted(adice, reverse=True),
+                        sorted(ddice, reverse=True),
+                    )
+
                     for a, d in zipped:
-                        if a>d:
+                        if a > d:
                             self.troop_counts[target_territory] -= 1
                         else:
                             self.troop_counts[origin_territory] -= 1
 
-                    res = current_player.retreat(self.get_observation(self.current_player), round)
+                    res = current_player.retreat(
+                        self.get_observation(self.current_player), round
+                    )
                     if res:
-                        #they retreat
+                        # they retreat
                         break
                     if self.troop_counts[target_territory] == 0:
                         target_person = self.ownership[target_territory]
                         self.captured_this_turn = True
                         self.ownership[target_territory] = self.current_player
-                        movecount = current_player.move_troop_count(self.get_observation(self.current_player), origin_territory, target_territory)
+                        movecount = current_player.move_troop_count(
+                            self.get_observation(self.current_player),
+                            origin_territory,
+                            target_territory,
+                        )
                         self.troop_counts[target_territory] += movecount
                         self.troop_counts[origin_territory] -= movecount
 
-                        #did the attacker completely kill them? If so, give all their cards
+                        # did the attacker completely kill them? If so, give all their cards
                         if self.ownership.count(target_person) == 0:
-                            self.cards[self.current_player].extend(self.cards[target_person])
+                            self.cards[self.current_player].extend(
+                                self.cards[target_person]
+                            )
                             self.cards[target_person] = []
                             self.deadplayers.append(target_person)
                         break
                     if self.troop_counts[origin_territory] == 1:
-                        #defeat. Just retreat basically
+                        # defeat. Just retreat basically
                         break
                     attacking_troops = self.troop_counts[origin_territory] - 1
                     defending_troops = self.troop_counts[target_territory]
@@ -271,7 +282,7 @@ class Game:
                     self.current_player + 1
                 ) % self.numplayers
 
-                #do card giving. calculate any completely killed players
+                # do card giving. calculate any completely killed players
 
     def get_observation(self, player_id: int) -> m.Observation:
         return m.Observation(
