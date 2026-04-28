@@ -1,9 +1,7 @@
 import riskai.countries as countries
 import random
-from copy import deepcopy
+from copy import deepcopy, copy
 import riskai.messages as m
-
-# from riskai.messages import *
 from riskai.decisions import Stages
 
 
@@ -32,6 +30,8 @@ class Game:
         self.current_phase = Stages.INITIAL_PLACEMENT
         self.turn_number = 0
         self.deadplayers = []
+
+        self.captured_this_turn:bool
 
     def setup(self) -> None:
         disabled_territories = [
@@ -126,6 +126,7 @@ class Game:
             # ====================================================================
             # ====================================================================
             case Stages.TURN_START:
+                self.captured_this_turn = False
                 # don't have to do anything. Just for game engine i think
                 # calculate the troop numbers here
                 self.current_phase = Stages.TREATY
@@ -194,15 +195,55 @@ class Game:
                     self.current_phase,
                 )
                 assert isinstance(res.response, m.Attack)
-            # ====================================================================
-            # ====================================================================
-            case Stages.RETREAT:
-                current_player = self.players[self.current_player]
-                res = current_player.decision(
-                    self.get_observation(self.current_player),
-                    self.current_phase,
-                )
-                assert isinstance(res.response, m.Retreat)
+
+                if not res.response.do_attack:
+                    self.current_phase = Stages.FORTIFY
+                    return
+
+                target_territory = res.response.to_territory_id
+                origin_territory = res.response.from_territory_id
+
+                attacking_troops = self.troop_counts[origin_territory] - 1
+                defending_troops = self.troop_counts[target_territory]
+
+                round = 1
+                while True:
+                    adcount = min(3, attacking_troops)
+                    ddcount = min(2, defending_troops)
+                    adice = [random.randint(1,6) for _ in range(adcount)]
+                    ddice = [random.randint(1,6) for _ in range(ddcount)]
+                    zipped = zip(sorted(adice, reverse=True), sorted(ddice, reverse=True))
+                    
+                    for a, d in zipped:
+                        if a>d:
+                            self.troop_counts[target_territory] -= 1
+                        else:
+                            self.troop_counts[origin_territory] -= 1
+
+                    res = current_player.retreat(self.get_observation(self.current_player), round)
+                    if res:
+                        #they retreat
+                        break
+                    if self.troop_counts[target_territory] == 0:
+                        target_person = self.ownership[target_territory]
+                        self.captured_this_turn = True
+                        self.ownership[target_territory] = self.current_player
+                        movecount = current_player.move_troop_count(self.get_observation(self.current_player), origin_territory, target_territory)
+                        self.troop_counts[target_territory] += movecount
+                        self.troop_counts[origin_territory] -= movecount
+
+                        #did the attacker completely kill them? If so, give all their cards
+                        if self.ownership.count(target_person) == 0:
+                            self.cards[self.current_player].extend(self.cards[target_person])
+                            self.cards[target_person] = []
+                            self.deadplayers.append(target_person)
+                        break
+                    if self.troop_counts[origin_territory] == 1:
+                        #defeat. Just retreat basically
+                        break
+                    attacking_troops = self.troop_counts[origin_territory] - 1
+                    defending_troops = self.troop_counts[target_territory]
+                    round += 1
             # ====================================================================
             # ====================================================================
             case Stages.FORTIFY:
@@ -212,6 +253,16 @@ class Game:
                     self.current_phase,
                 )
                 assert isinstance(res.response, m.Fortify)
+
+                if not res.response.do_reinforce:
+                    self.current_phase = Stages.END_TURN
+                    return
+                from_territory = res.response.from_territory
+                to_territory = res.response.to_territory
+                troops = res.response.troops
+
+                self.troop_counts[from_territory] -= troops
+                self.troop_counts[to_territory] += troops
             # ====================================================================
             # ====================================================================
             case Stages.END_TURN:
@@ -219,6 +270,8 @@ class Game:
                 self.current_player = (
                     self.current_player + 1
                 ) % self.numplayers
+
+                #do card giving. calculate any completely killed players
 
     def get_observation(self, player_id: int) -> m.Observation:
         return m.Observation(

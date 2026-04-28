@@ -5,9 +5,20 @@ from riskai.decisions import Stages
 
 
 class User(player_class.PlayerTemplate):
-    def accept_treaty(self, observation: m.Observation, player_id, level: m.TreatyLevels) -> bool:
+    def retreat(self, observation: m.Observation, round: int) -> bool:
+        print("Attacking.")
+        print(observation, "\nround: ", round)
+        return inputs.bool_input("Retreat? ")
+    def move_troop_count(self, observation: m.Observation, from_t, to_t) -> int:
+        print(observation, from_t, to_t)
+        return inputs.int_input("How many troops to move? ")
+
+    def accept_treaty(
+        self, observation: m.Observation, player_id, level: m.TreatyLevels
+    ) -> bool:
         print(observation, player_id, level)
         return inputs.bool_input("Accept this treaty? ")
+
     def decision(
         self, observation: m.Observation, phase: Stages
     ) -> m.Response:
@@ -49,7 +60,6 @@ class User(player_class.PlayerTemplate):
                     )
                 from_territory = inputs.int_input("Origin territory id? ")
                 target_territory = inputs.int_input("Target territory id? ")
-                troops = inputs.int_input("How many troops? ")
 
                 response = m.Response(
                     Stages.ATTACK_DECLARATION,
@@ -57,17 +67,9 @@ class User(player_class.PlayerTemplate):
                         do_attack=True,
                         from_territory_id=from_territory,
                         to_territory_id=target_territory,
-                        troops=troops,
                     ),
                 )
                 return response
-            # =================================================================
-            # =================================================================
-            case Stages.RETREAT:
-                shouldRetreat = inputs.bool_input("Retreat (True/False)? ")
-                return m.Response(
-                    Stages.RETREAT, m.Retreat(retreat=shouldRetreat)
-                )
             # =================================================================
             # =================================================================
             case Stages.FORTIFY:
