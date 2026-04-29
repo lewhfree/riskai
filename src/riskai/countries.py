@@ -128,3 +128,9 @@ extra_territories = [
     "HAWAII",
     "SVALBARD",
 ]
+# fmt: off
+# 1 is person, 2 is horsey, 3 is cannon, 4 is wild
+# 16 of each and 2 wilds
+# pulled directly from the risk game
+cards:list = [1, 1, 3, 2, 2, 2, 2, 3, 3, 3, 2, 1, 1, 3, 1, 2, 2, 1, 1, 1, 3, 2, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 1, 2, 1, 1, 3, 2, 2, 1, 2, 2, 2, 1, 4, 4]
+# fmt: on
