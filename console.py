@@ -11,4 +11,6 @@ for _ in range(5):
 
 game = game_class.Game(extra_territories_enabled, players)
 
-game.start()
+game.setup()
+while not game.over:
+    game.step()

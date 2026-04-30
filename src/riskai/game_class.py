@@ -293,8 +293,3 @@ class Game:
             self.turn_number,
             self.treaties,
         )
-
-    def start(self) -> None:
-        self.setup()
-        while not self.over:
-            self.step()
