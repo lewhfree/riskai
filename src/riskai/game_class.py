@@ -29,7 +29,7 @@ class Game:
 
         self.current_player = 0
         self.current_phase = Stages.INITIAL_PLACEMENT
-        self.turn_number = 0
+        self.turn_number = 1
         self.deadplayers: list[int] = []
 
         self.captured_this_turn: bool
@@ -275,6 +275,7 @@ class Game:
 
                 self.troop_counts[from_territory] -= troops
                 self.troop_counts[to_territory] += troops
+                self.current_phase = Stages.END_TURN
             # ====================================================================
             # ====================================================================
             case Stages.END_TURN:
@@ -283,6 +284,7 @@ class Game:
                     self.current_player + 1
                 ) % self.numplayers
 
+                self.turn_number += 1
                 # do card giving. calculate any completely killed players
 
     def get_observation(self, player_id: int) -> m.Observation:
