@@ -11,13 +11,13 @@ class User(player_class.PlayerTemplate):
         return inputs.bool_input("Retreat? ")
 
     def move_troop_count(
-        self, observation: m.Observation, from_t, to_t
+        self, observation: m.Observation, from_t: int, to_t: int
     ) -> int:
         print(observation, from_t, to_t)
         return inputs.int_input("How many troops to move? ")
 
     def accept_treaty(
-        self, observation: m.Observation, player_id, level: m.TreatyLevels
+        self, observation: m.Observation, player_id: int, level: m.TreatyLevels
     ) -> bool:
         print(observation, player_id, level)
         return inputs.bool_input("Accept this treaty? ")
@@ -30,7 +30,7 @@ class User(player_class.PlayerTemplate):
             # =================================================================
             # =================================================================
             case Stages.TREATY:
-                level:str = input(
+                level: str = input(
                     "Which Treaty level (LEVEL1, LEVEL2, LEVEL3, WAR, NONE, NO_TREATIES)? "
                 )
                 levelenum = m.TreatyLevels[level]
@@ -56,8 +56,8 @@ class User(player_class.PlayerTemplate):
             # =================================================================
             # =================================================================
             case Stages.ATTACK_DECLARATION:
-                shouldAttack = inputs.bool_input("Attack (True/False)? ")
-                if not shouldAttack:
+                should_attack = inputs.bool_input("Attack (True/False)? ")
+                if not should_attack:
                     return m.Response(
                         Stages.ATTACK_DECLARATION, m.Attack(do_attack=False)
                     )

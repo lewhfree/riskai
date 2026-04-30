@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import IntEnum
+from riskai import messages as m
 
 
 @dataclass
@@ -9,7 +10,7 @@ class Observation:
     cards: list[int]
     player_id: int
     turn_number: int
-    treaties: list[list]
+    treaties: list[list[m.TreatyLevels]]
 
 
 @dataclass

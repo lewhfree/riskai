@@ -17,7 +17,7 @@ def bool_input(prompt: str) -> bool:
     val: bool
     while True:
         try:
-            val = bool(input(prompt).lower == "true")
+            val = bool(input(prompt).lower() == "true")
             break
         except ValueError:
             print("bad bool value")

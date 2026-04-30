@@ -3,10 +3,11 @@ import random
 from copy import deepcopy
 import riskai.messages as m
 from riskai.decisions import Stages
+from riskai.players.player_class import PlayerTemplate as Player
 
 
 class Game:
-    def __init__(self, extra_territories, players: list):
+    def __init__(self, extra_territories: list[str], players: list[Player]):
         # State
         self.troop_counts = deepcopy(countries.troop_count)
         self.ownership = deepcopy(countries.ownership)
@@ -29,7 +30,7 @@ class Game:
         self.current_player = 0
         self.current_phase = Stages.INITIAL_PLACEMENT
         self.turn_number = 0
-        self.deadplayers:list[int] = []
+        self.deadplayers: list[int] = []
 
         self.captured_this_turn: bool
 
@@ -68,12 +69,12 @@ class Game:
         troops: int = (
             (50 - 5 * self.numplayers) if self.numplayers <= 6 else (30)
         )
-        remainingtroops: list = []
+        remainingtroops: list[int] = []
         for i in range(self.numplayers):
             remainingtroops.append(troops - self.ownership.count(i))
         self.remaining_troops = remainingtroops
 
-    def owns_continent(self, player_id, continent_id) -> bool:
+    def owns_continent(self, player_id: int, continent_id: int) -> bool:
         numcountries = countries.continent.count(continent_id)
         count = 0
         assert numcountries != 0
@@ -84,7 +85,7 @@ class Game:
                 count += 1
         return numcountries == count
 
-    def owns_any_continents(self, player_id) -> list[int]:
+    def owns_any_continents(self, player_id: int) -> list[int]:
         # TODO: REALLY REALLY INEFFICIENT, FIX ASAP
         # this loops over continent #continents times. This can be simplified into a single run.
         # nested loop bad.
@@ -223,10 +224,10 @@ class Game:
                         else:
                             self.troop_counts[origin_territory] -= 1
 
-                    res = current_player.retreat(
+                    resb = current_player.retreat(
                         self.get_observation(self.current_player), round
                     )
-                    if res:
+                    if resb:
                         # they retreat
                         break
                     if self.troop_counts[target_territory] == 0:
