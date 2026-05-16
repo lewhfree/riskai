@@ -51,7 +51,8 @@ class Treaty:
 
 @dataclass
 class Cards:
-    okay: bool
+    do_cards: bool
+    cards: list[int] = []
 
 
 @dataclass

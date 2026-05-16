@@ -42,8 +42,15 @@ class User(player_class.PlayerTemplate):
             # =================================================================
             # =================================================================
             case Stages.CARDS:
-                print("cards")
-                pass
+                do_cards = inputs.bool_input("Do card turnin True/false? ")
+                if not do_cards:
+                    return m.Response(Stages.CARDS, m.Cards(do_cards=False))
+
+                cards = [
+                    int(x)
+                    for x in input("list of cards (eg. 0,6,23): ").split(",")
+                ]
+                return m.Response(Stages.CARDS, m.Cards(True, cards))
             # =================================================================
             # =================================================================
             case Stages.REINFORCE | Stages.INITIAL_PLACEMENT:

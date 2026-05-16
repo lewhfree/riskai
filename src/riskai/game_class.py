@@ -12,6 +12,8 @@ class Game:
         self.troop_counts = deepcopy(countries.troop_count)
         self.ownership = deepcopy(countries.ownership)
         self.territory_enabled = deepcopy(countries.enabled)
+        self.card_deck = countries.cards
+        self.discard_pile: list[int] = []
 
         self.extra_territories = extra_territories
         self.all_extra_territories = countries.extra_territories
@@ -73,6 +75,9 @@ class Game:
         for i in range(self.numplayers):
             remainingtroops.append(troops - self.ownership.count(i))
         self.remaining_troops = remainingtroops
+
+        self.card_deck_indices_master = [x for x in range(len(self.card_deck))]
+        self.card_deck_indices = self.card_deck_indices_master.copy()
 
     def owns_continent(self, player_id: int, continent_id: int) -> bool:
         numcountries = countries.continent.count(continent_id)
@@ -172,6 +177,14 @@ class Game:
                     self.current_phase,
                 )
                 assert isinstance(res.response, m.Cards)
+
+                if not res.response.do_cards:
+                    self.current_phase = Stages.REINFORCE
+                    return
+
+                # one of each is 10 troops
+                # 4 for 3 cavalry
+                # 
             # ====================================================================
             # ====================================================================
             case Stages.REINFORCE:
@@ -286,6 +299,13 @@ class Game:
 
                 self.turn_number += 1
                 # do card giving. calculate any completely killed players
+                card = self.card_deck_indices.pop(
+                    random.randint(0, len(self.card_deck_indices) - 1)
+                )
+                self.cards[self.current_player].append(card)
+                if len(self.card_deck_indices) == 0:
+                    self.card_deck_indices.extend(self.discard_pile)
+                    self.discard_pile = []
 
     def get_observation(self, player_id: int) -> m.Observation:
         return m.Observation(
